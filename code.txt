@@ -1,0 +1,320 @@
+ //loader
+ 
+// <div class="text">
+//             <div class="loader loader--style7" title="6">
+//                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+//                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px"
+//                     viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+//                     <rect x="0" y="0" width="4" height="20" fill="#333">
+//                         <animate attributeName="opacity" attributeType="XML" values="1; .2; 1" begin="0s" dur="0.6s"
+//                             repeatCount="indefinite" />
+//                     </rect>
+//                     <rect x="7" y="0" width="4" height="20" fill="#333">
+//                         <animate attributeName="opacity" attributeType="XML" values="1; .2; 1" begin="0.2s" dur="0.6s"
+//                             repeatCount="indefinite" />
+//                     </rect>
+//                     <rect x="14" y="0" width="4" height="20" fill="#333">
+//                         <animate attributeName="opacity" attributeType="XML" values="1; .2; 1" begin="0.4s" dur="0.6s"
+//                             repeatCount="indefinite" />
+//                     </rect>
+//                 </svg>
+//             </div>
+//         </div>
+
+
+
+
+
+const app_id = 'c1a66089'
+const app_key = '633ddbfeef2ba87de0cca2ce22ea586d'
+const recipesContainer = document.querySelector('.results')
+const loaderContainer = document.querySelector('.loader-container')
+const input = document.querySelector('input')
+const button = document.querySelector('button')
+
+const showLoader = () => {
+    loaderContainer.style = "display: flex"
+}
+
+const hideLoader = () => {
+    loaderContainer.style = "display: none"
+}
+
+const generateCard = (image, title) => `
+<div style="width: 300px;" class='bg-white rounded-3xl shadow-xl overflow-hidden'>
+    <div class='max-w-md mx-auto'>
+        <div style="height: 200px; background-image: url('${image}');
+        background-position: center;
+        background-size: cover;">
+        </div>
+        <div class='p-4 sm:p-6'>
+            <p class='font-bold text-gray-700 text-[18px] leading-7 mb-1'>${title}</p>
+            <div class='flex flex-row'>
+                <p class='text-[#3C3C4399] text-[12px] mr-2 line-through'>MVR 700</p>
+                <p class='text-[17px] font-bold text-[#0FB478]'>MVR 700</p>
+            </div>
+            <p class='text-[#7C7C80] font-[15px] mt-2'>
+                <ul class="font-[15px] mt-2">
+                    <li>
+                        ingredients
+                    </li>
+                    <li>
+                        ingredients
+                    </li>
+                </ul>
+                
+            </p>
+            <a target='_blank' href='foodiesapp://food/1001' class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
+                View Recipe
+            </a>
+        </div>
+    </div>
+</div>`
+
+const getRecipes = async () => {
+    try {
+        showLoader()
+        const searchString = input.value
+        const response = await fetch(generatendpoint(searchString))
+        console.log(response)
+        const data = await response.json()
+        console.log(data)
+        const recipes = data.hits
+
+        recipesContainer.innerHTML = ''
+        recipes.forEach(recipe => {
+            const {image, label} = recipe.recipe
+            recipesContainer.innerHTML = generateCard(image, label)
+        })
+    }
+    catch (error) {
+        console.log(error)
+    }
+    finally {
+        hideLoader()
+        input.value = ""
+    }
+}
+
+const generatendpoint = (searchString = '') => https://api.edamam.com/api/recipes/v2?type=public&q=${searchString}&app_id=${app_id}&app_key=${app_key}
+
+button.addEventListener('click', getRecipes)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>Recipe App</title>
+        <script defer src="./script.js"></script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            *{
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+                font-family: Metropolis;
+            }
+
+            .loader{
+                margin: 0 0 2em;
+                height: 100px;
+                width: 20%;
+                text-align: center;
+                padding: 1em;
+                margin: 0 auto 1em;
+                display: inline-block;
+                vertical-align: top;
+            }
+            
+            .loader-container svg path,
+            .loader-container svg rect{
+                fill: #9016a8;
+            }
+
+            div.loader{
+                height: 100vh;
+                width: 100vw;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: #111;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                opacity: 0.9;
+                color: #fff;
+
+                /* Will ensure it is on top of everything */
+                z-index: 100;
+                display: none;
+            }
+
+            div.input-container{
+                width: 800px;
+                height: 100px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 40px auto;
+                flex-direction: column;
+            }
+
+            div.results{
+                padding: 0 20px;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            div.results div{
+                margin: 0px 20px;
+            }
+        </style>
+    </head>
+
+    <body class="">
+        <div class="loader">
+            <div class="text">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="30px" viewBox="0 0 24 30" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+                    <rect x="0" y="0" width="4" height="10" fill="#333">
+                        <animateTransform attributeType="xml"
+                        attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0"
+                        begin="0" dur="0.6s" repeatCount="indefinite" />
+                    </rect>
+                    <rect x="10" y="0" width="4" height="10" fill="#333">
+                        <animateTransform attributeType="xml"
+                        attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0"
+                        begin="0.2s" dur="0.6s" repeatCount="indefinite" />
+                    </rect>
+                    <rect x="20" y="0" width="4" height="10" fill="#333">
+                        <animateTransform attributeType="xml"
+                        attributeName="transform" type="translate"
+                        values="0 0; 0 20; 0 0"
+                        begin="0.4s" dur="0.6s" repeatCount="indefinite" />
+                    </rect>
+                </svg>
+            </div>
+        </div>
+        <div class="input-container">
+            <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Recipe Search</h1>
+            <div class="w-full">   
+                <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+
+                    
+
+
+
+
+<div class="results">
+        <!-- component -->
+        <!-- This is an example component -->
+
+
+        <div style="width: 300px" class='mx-auto bg-white rounded-3xl shadow-xl overflow-hidden'>
+            <div class='max-w-md mx-auto'>
+                <img class="w-full"
+                    src="https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6"
+                    alt="">
+
+
+                <div class='p-4 sm:p-6'>
+                    <p class='font-bold text-gray-700 text-[18px] leading-7 mb-1'>Spagetti with shrimp sauce</p>
+                    <div class='flex flex-row'>
+                        <p class='text-[#3C3C4399] text-[12px] mr-2 line-through'>MVR 700</p>
+                        <p class='text-[17px] font-bold text-[#0FB478]'>MVR 700</p>
+                    </div>
+                    <p>
+                    <ul class=" font-[15px] mt-2">
+                        <li>
+                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium tempora, maiores
+                            laboriosam excepturi facere quas itaque cum harum a impedit, ut cupiditate? Modi, eaque!
+                        </li>
+                        
+                    </ul>
+                    </p>
+
+
+                    <a target='_blank' href='foodiesapp://food/1001'
+                        class='block mt-4 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
+                        View on foodies
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+//results
+ <!-- class='flex items-center justify-center min-h-screen from-[#F9F5F3] via-[#F9F5F3] to-[#F9F5F3] bg-gradient-to-br px-2'> -->
+
+ // <div style = "height: 200px; background-image:url('https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6');
+    // background-position:center;
+    // background-size:cover;
+    // " class="bg-red-100 w-full h-2/3">
+    // </div>
+
+
+    // <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'>Spagetti with shrimp sauce</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <div style="width:300px" class='bg-white rounded-3xl shadow-xl overflow-hidden'>
+                <div class='max-w-md mx-auto'>
+
+                    <div style = "height: 200px; background-image:url('https://img.freepik.com/free-photo/pasta-spaghetti-with-shrimps-sauce_1220-5072.jpg?w=2000&t=st=1678041911~exp=1678042511~hmac=e4aa55e70f8c231d4d23832a611004f86eeb3b6ca067b3fa0c374ac78fe7aba6');
+                    background-position:center;
+                    background-size:cover;
+                    " class="bg-red-100 w-full h-2/3">
+                    </div>
+
+                    <div class='p-4 sm:p-6'>
+                        <p class='font-bold text-gray-700 text-[22px] leading-7 mb-1'>Spagetti with shrimp sauce</p>
+                        <div class='flex flex-row'>
+                            <p class='text-[#3C3C4399] text-[17px] mr-2 line-through'>MVR 700</p>
+                            <p class='text-[17px] font-bold text-[#0FB478]'>MVR 700</p>
+                        </div>
+                        <p class='text-[#7C7C80] font-[15px] mt-2'>
+                        <ul>
+                            <li>Our shrimp sauce is made with mozarella, a creamy
+                                taste of shrimp with extra kick of spices.</li>
+                            <li>Our shrimp sauce is made with mozarella, a creamy
+                                taste of shrimp with extra kick of spices.</li>
+                        </ul>
+                        </p>
+
+
+                        <a target='_blank' href='foodiesapp://food/1001'
+                            class='block mt-10 w-full px-4 py-3 font-medium tracking-wide text-center capitalize transition-colors duration-300 transform bg-[#FFC933] rounded-[14px] hover:bg-[#FFC933DD] focus:outline-none focus:ring focus:ring-teal-300 focus:ring-opacity-80'>
+                            View on foodies
+                        </a>
+
+                    </div>
+                    
+                </div>
+            </div> -->
